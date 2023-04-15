@@ -1,0 +1,31 @@
+@startuml
+left to right direction
+actor Customer as c
+rectangle "insurance-account-svc" {
+  usecase "Get Available Insurance Products and Prices" as gapp
+}
+rectangle "Travel-insurance-svc" {
+  usecase "Buy Insurance Plan" as bip
+}
+rectangle "insurance-payment-svc" {
+  usecase "Request Payment" as rp
+  usecase "Validate Payment" as vp
+}
+rectangle "payment-svc" {
+  usecase "Validate Payment" as pv
+}
+rectangle "Insurance-Gateway-svc" {
+  usecase "Buy Policy" as bp
+}
+rectangle "Insurance Provider/Trusted Partner" {
+  usecase "Request Policy Purchase" as rpp
+}
+
+c --> gapp
+c --> bip
+bip --> rp
+rp --> vp
+vp --> pv
+bip --> bp
+bp --> rpp
+@enduml
