@@ -1,0 +1,43 @@
+@startuml
+title "Travel Insurance Sequence Diagram"
+actor Customer as c
+participant "insurance-account-svc" as in
+participant "Travel-insurance-svc" as int
+participant "insurance-gateway" as ig
+participant "insurance-payment-svc" as ips
+participant "payment-svc" as p
+participant "kafka" as k
+participant "insurance Provider/ Trusted Partner" as ipt
+
+group Get Plan
+activate c
+c -> in: Get Available Insurance Products and Prices
+in --> c: 200 OK
+deactivate c
+end
+
+group Buy Plan
+
+c -> int: /buy-plan\n Buy Plan
+activate c
+activate int
+activate ips
+int -> ips: /payment\n Request payment
+ips -> ips: Validate Request payload
+ips -> k: Payment Initiated\n Topic{paymentReqID,status="requested"}
+deactivate ips
+k -> p: Payment Validation
+p -> k: Payment SuccessTopic{paymentReqID,status="sucess"}
+k -> int: Mark Payment Success
+activate ig
+int -> ig: /buy \nBuy policy from provider
+ig -> ipt: /buy \n Request for policy purchase
+ipt --> ig: 200 OK
+
+ig --> int: 200 OK
+deactivate ig
+int --> c: 200 OK\n Policy number
+deactivate int
+deactivate c
+end
+@enduml
